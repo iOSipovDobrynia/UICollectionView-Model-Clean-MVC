@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  MenuViewController.swift
 //  UICollectionView,Model,Clean MVC
 //
 //  Created by Goodwasp on 03.11.2023.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class MenuViewController: UIViewController {
 
     // MARK: - IBoutlets
     @IBOutlet var collectionView: UICollectionView!
@@ -17,7 +17,12 @@ class ViewController: UIViewController {
         var blankMenu = Menu()
         blankMenu.name = "Coca-Cola"
         blankMenu.imageName = "cola"
-        return [blankMenu]
+        
+        var blankMenuTwo = Menu()
+        blankMenuTwo.name = "John Golt"
+        blankMenuTwo.imageName = "5555766"
+        
+        return [blankMenu, blankMenuTwo]
     }()
     
     // MARK: - View's lifecycle
@@ -27,15 +32,29 @@ class ViewController: UIViewController {
         collectionView.dataSource = self
         collectionView.delegate = self
     }
+    
+    // MARK: - Navigation
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "showDetail" {
+            guard let vc = segue.destination as? MenuDetailViewController else { return }
+            vc.menu = sender as? Menu
+        }
+    }
 }
 
 // MARK: - UICollectionViewDelegate
-extension ViewController: UICollectionViewDelegate {
-    
+extension MenuViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let menu = menuItems[indexPath.item]
+        collectionView.deselectItem(at: indexPath, animated: true)
+        performSegue(withIdentifier: "showDetail", sender: menu)
+        
+        
+    }
 }
 
 // MARK: - UICollectionViewDataSource
-extension ViewController: UICollectionViewDataSource {
+extension MenuViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         menuItems.count
     }
@@ -50,7 +69,7 @@ extension ViewController: UICollectionViewDataSource {
 }
 
 // MARK: - UICollectionViewDelegateFlowLayout
-extension ViewController: UICollectionViewDelegateFlowLayout {
+extension MenuViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let itemsPerRow: CGFloat = 2
         let paddingWidth = 20 * (itemsPerRow + 1)
